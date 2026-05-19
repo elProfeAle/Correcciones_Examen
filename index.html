@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correcciones de Exámenes</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:              #ffffff;
+      --surface:         #f7f7f5;
+      --border:          #e8e8e4;
+      --border-strong:   #d0d0ca;
+      --text-primary:    #111110;
+      --text-secondary:  #6b6b68;
+      --text-muted:      #a8a8a3;
+      --accent:          #111110;
+      --accent-fg:       #ffffff;
+      --success-bg:      #f0fdf4;
+      --success-border:  #bbf7d0;
+      --success-text:    #15803d;
+      --danger-bg:       #fef2f2;
+      --danger-border:   #fecaca;
+      --danger-text:     #dc2626;
+      --warning-bg:      #fffbeb;
+      --warning-border:  #fde68a;
+      --warning-text:    #b45309;
+      --radius:          10px;
+      --radius-sm:       6px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 3rem 1rem 4rem;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* Header */
+    .header { margin-bottom: 2rem; }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .badge-top::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--success-text);
+    }
+
+    h1 {
+      font-size: 27px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    h1 span { color: var(--text-muted); font-weight: 300; }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Search card */
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px 0 38px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.08em;
+    }
+
+    input[type="text"]::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    input[type="text"]:focus {
+      background: var(--bg);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(17,17,16,0.07);
+    }
+
+    .btn {
+      width: 100%;
+      height: 44px;
+      margin-top: 10px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn:hover  { opacity: 0.82; }
+    .btn:active { transform: scale(0.99); }
+    .btn svg { transition: transform 0.15s; }
+    .btn:hover svg { transform: translateX(3px); }
+
+    /* Result card contents */
+    #resultado { display: none; }
+
+    #resultado .card hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    #resultado .card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .nota {
+      font-family: 'DM Mono', monospace;
+      font-size: 46px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      line-height: 1;
+      display: inline;
+    }
+
+    .nota.aprobado    { color: var(--success-text); }
+    .nota.desaprobado { color: var(--danger-text); }
+    .nota.regular     { color: var(--warning-text); }
+
+    .estado-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      vertical-align: middle;
+      position: relative;
+      top: -8px;
+      margin-left: 10px;
+    }
+
+    .estado-pill::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .estado-pill.aprobado    { background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
+    .estado-pill.desaprobado { background: var(--danger-bg);  border: 1px solid var(--danger-border);  color: var(--danger-text); }
+    .estado-pill.regular     { background: var(--warning-bg); border: 1px solid var(--warning-border); color: var(--warning-text); }
+
+    /* Puntajes heading (h4) */
+    #resultado .card h4 {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* Puntajes list — first ul after h4 */
+    #resultado .puntajes-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+
+    #resultado .puntajes-list li {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: 'DM Mono', monospace;
+      color: var(--text-primary);
+    }
+
+    /* Section label (h3 "Corrección completa") */
+    #resultado .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* Exercise headings (h3 inside correccionCompleta) */
+    #resultado .correccion h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 18px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #resultado .correccion hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    #resultado .correccion p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    #resultado .correccion p b {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    #resultado .correccion ul {
+      list-style: none;
+      margin: 6px 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #resultado .correccion ul li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+
+    #resultado .correccion code {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--text-primary);
+    }
+
+    #resultado .correccion pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      overflow-x: auto;
+      margin: 8px 0 12px;
+      white-space: pre;
+    }
+
+    /* Error message */
+    .error {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-sm);
+      color: var(--danger-text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .error::before {
+      content: '✕';
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <div class="header">
+    <div class="badge-top">Sistema activo</div>
+    <h1>Corrección <span>de exámenes</span></h1>
+    <p class="subtitle">Ingresá tu DNI para ver tu devolución personalizada.</p>
+  </div>
+
+  <div class="card">
+    <label class="field-label" for="dni">Número de DNI</label>
+    <div class="input-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+      </svg>
+      <input type="text" id="dni" placeholder="Ej: 12345678" autocomplete="off">
+    </div>
+    <button class="btn" onclick="buscarAlumno()">
+      Ver corrección
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="resultado"></div>
+
+  <footer>Instituto Visión Tecnológica</footer>
+
+</div>
+
+<script src="datos.js"></script>
+<script>
+  function buscarAlumno() {
+    const dni      = document.querySelector("#dni").value.trim();
+    const resultado = document.querySelector("#resultado");
+
+    const alumno = datos.find(a => a.dni == dni);
+
+    if (alumno) {
+      const nota = parseFloat(alumno.ej1) + parseFloat(alumno.ej2) + parseFloat(alumno.ej3);
+      const notaDisplay = (Math.round(nota * 10) / 10).toString().replace('.', ',');
+
+      let estadoClase, estadoTexto;
+      if      (nota >= 7) { estadoClase = 'aprobado';    estadoTexto = 'Aprobado'; }
+      else if (nota >= 4) { estadoClase = 'regular';     estadoTexto = 'Regular'; }
+      else                { estadoClase = 'desaprobado'; estadoTexto = 'Desaprobado'; }
+
+      resultado.style.display = "block";
+      resultado.innerHTML = `
+        <div class="card">
+
+          <h2>${alumno.nombre}</h2>
+
+          <div>
+            <span class="nota ${estadoClase}">${notaDisplay}<small style="font-size:20px; color:var(--text-muted); font-weight:400; margin-left:2px;">/10</small></span>
+            <span class="estado-pill ${estadoClase}">${estadoTexto}</span>
+          </div>
+
+          <hr>
+
+          <h4>Puntaje por ejercicio</h4>
+          <ul class="puntajes-list">
+            <li>Ejercicio 1 &nbsp; ${alumno.ej1}/3</li>
+            <li>Ejercicio 2 &nbsp; ${alumno.ej2}/4</li>
+            <li>Ejercicio 3 &nbsp; ${alumno.ej3}/3</li>
+          </ul>
+
+          <hr>
+
+          <p class="section-label">Corrección completa</p>
+          <div class="correccion">
+            ${alumno.correccionCompleta}
+          </div>
+
+        </div>
+      `;
+    } else {
+      resultado.style.display = "block";
+      resultado.innerHTML = `
+        <div class="card">
+          <p class="error">No se encontró ningún alumno con ese DNI.</p>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById('dni').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') buscarAlumno();
+  });
+</script>
+
+</body>
+</html>
