@@ -14,6 +14,8 @@ const datos = [
 
         correccionCompleta: `
 
+    <h2>Recuperatorio: 3</h2>    
+
     <h3>Ejercicio 1</h3>
 
     <p><b>✔ Lo que hizo bien</b></p>
@@ -1762,15 +1764,20 @@ Promedionotas.innerHTML += \`\${numeros[index] * numeros[index]} \`
     dni:"49481697",
     nombre:"Diaz Gatica Anna",
 
-    ej1:1.5,
-    ej2:0.5,
-    ej3:0,
+    ej1:3,
+    ej2:4,
+    ej3:3,
 
     devolucion:"La estudiante demuestra una comprensión parcial de arreglos y ciclos for, pero presenta dificultades importantes en manipulación del DOM y resolución completa de consignas.",
 
-    observaciones:"Debe reforzar cálculo de promedio, template strings, innerHTML y trabajo con objetos.",
+    observaciones:"Recuperatorio: Excelente trabajo -Debe reforzar cálculo de promedio, template strings, innerHTML y trabajo con objetos.",
 
     correccionCompleta: `
+
+    <h2>Recuperatorio: 10</h2>
+    <p>Excelente examen, nada que corregir.</p>
+
+    <h2>Nota anterior: 2</h2>
 
     <h3>Ejercicio 1 — 1.5/3</h3>
 
